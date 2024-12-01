@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - e-shop-api-east-us
 on:
   push:
     branches:
-      - fix_runtime
+      - main
   workflow_dispatch:
 
 jobs:
