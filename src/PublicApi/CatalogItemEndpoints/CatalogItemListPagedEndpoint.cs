@@ -42,10 +42,6 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
 
     public async Task<IResult> HandleAsync(ListPagedCatalogItemRequest request, IRepository<CatalogItem> itemRepository)
     {
-        _logger.LogInformation("INFO: CatalogItemListPagedEndpoint started ...");
-        _logger.LogDebug("DEBUG: CatalogItemListPagedEndpoint started ...");
-        _logger.LogWarning("WARN: CatalogItemListPagedEndpoint started ...");
-        _logger.LogCritical("CRITICAL: CatalogItemListPagedEndpoint started ...");
         await Task.Delay(1000);
         var response = new ListPagedCatalogItemResponse(request.CorrelationId());
 
@@ -75,7 +71,7 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
             response.PageCount = totalItems > 0 ? 1 : 0;
         }
 
-        _logger.LogInformation($"Found catalog items: {response.CatalogItems.Count}");
+        _logger.LogWarning($"Found catalog items: {response.CatalogItems.Count}");
 
         return Results.Ok(response);
     }
