@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinimalApi.Endpoint.Configurations.Extensions;
@@ -126,6 +127,10 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure logging
 builder.Logging.AddApplicationInsights();
+builder.Services.AddApplicationInsightsTelemetry("2abfc5a9-991c-47b2-962d-b1d35857f4e4");
+builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Error);
+
+
 
 var app = builder.Build();
 

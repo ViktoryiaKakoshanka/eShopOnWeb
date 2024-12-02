@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -21,12 +22,14 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
     private readonly IUriComposer _uriComposer;
     private readonly IMapper _mapper;
     private readonly ILogger<CatalogItemListPagedEndpoint> _logger;
+    private readonly TelemetryClient _telemetryClient;
 
-    public CatalogItemListPagedEndpoint(IUriComposer uriComposer, IMapper mapper, ILogger<CatalogItemListPagedEndpoint> logger)
+    public CatalogItemListPagedEndpoint(IUriComposer uriComposer, IMapper mapper, ILogger<CatalogItemListPagedEndpoint> logger, TelemetryClient telemetryClient)
     {
         _uriComposer = uriComposer;
         _mapper = mapper;
         _logger = logger;
+        _telemetryClient = telemetryClient;
     }
 
     public void AddRoute(IEndpointRouteBuilder app)
@@ -44,8 +47,16 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
     {
         await Task.Delay(1000);
         var response = new ListPagedCatalogItemResponse(request.CorrelationId());
-
-        throw new Exception("Cannot move further");
+        //try
+        {
+            throw new Exception("Cannot move further");
+        }
+        //catch (Exception ex)
+        //{
+        //    _telemetryClient.TrackException(ex);
+        //    throw;
+        //}
+        
 
         var filterSpec = new CatalogFilterSpecification(request.CatalogBrandId, request.CatalogTypeId);
         int totalItems = await itemRepository.CountAsync(filterSpec);
