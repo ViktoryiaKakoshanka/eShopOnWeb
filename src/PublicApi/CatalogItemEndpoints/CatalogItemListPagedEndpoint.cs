@@ -53,6 +53,7 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "An exception occurred.");
             _telemetryClient.TrackException(ex);
             throw;
         }
