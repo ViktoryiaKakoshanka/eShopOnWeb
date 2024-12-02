@@ -45,6 +45,8 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
         await Task.Delay(1000);
         var response = new ListPagedCatalogItemResponse(request.CorrelationId());
 
+        throw new Exception("Cannot move further");
+
         var filterSpec = new CatalogFilterSpecification(request.CatalogBrandId, request.CatalogTypeId);
         int totalItems = await itemRepository.CountAsync(filterSpec);
 
