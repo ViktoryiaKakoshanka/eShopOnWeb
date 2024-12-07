@@ -77,7 +77,9 @@ public class BasketService : IBasketService
         var jsonContent = JsonConvert.SerializeObject(quantities);
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync("e-shop-orderitemsreserver.azurewebsites.net/api/UploadOrderRequest", content);
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.PostAsync("https://e-shop-orderitemsreserver.azurewebsites.net/api/UploadOrderRequest", content);
         response.EnsureSuccessStatusCode();
     }
 
