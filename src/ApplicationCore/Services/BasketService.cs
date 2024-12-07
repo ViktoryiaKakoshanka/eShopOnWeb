@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using Microsoft.eShopWeb.ApplicationCore.Entities.BasketAggregate;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.ApplicationCore.Specifications;
+using Newtonsoft.Json;
 
 namespace Microsoft.eShopWeb.ApplicationCore.Services;
 
@@ -13,11 +16,13 @@ public class BasketService : IBasketService
     private readonly IRepository<Basket> _basketRepository;
     private readonly IAppLogger<BasketService> _logger;
 
-    public BasketService(IRepository<Basket> basketRepository,
-        IAppLogger<BasketService> logger)
+    private readonly HttpClient _httpClient;
+
+    public BasketService(IRepository<Basket> basketRepository, IAppLogger<BasketService> logger, HttpClient httpClient)
     {
         _basketRepository = basketRepository;
         _logger = logger;
+        _httpClient = httpClient;
     }
 
     public async Task<Basket> AddItemToBasket(string username, int catalogItemId, decimal price, int quantity = 1)
@@ -44,11 +49,15 @@ public class BasketService : IBasketService
         await _basketRepository.DeleteAsync(basket);
     }
 
+
+    // pay now
     public async Task<Result<Basket>> SetQuantities(int basketId, Dictionary<string, int> quantities)
     {
         var basketSpec = new BasketWithItemsSpecification(basketId);
         var basket = await _basketRepository.FirstOrDefaultAsync(basketSpec);
         if (basket == null) return Result<Basket>.NotFound();
+
+        await UploadOrderDetailsToFunction(quantities);
 
         foreach (var item in basket.Items)
         {
@@ -61,6 +70,15 @@ public class BasketService : IBasketService
         basket.RemoveEmptyItems();
         await _basketRepository.UpdateAsync(basket);
         return basket;
+    }
+
+    private async Task UploadOrderDetailsToFunction(Dictionary<string, int> quantities)
+    {
+        var jsonContent = JsonConvert.SerializeObject(quantities);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync("e-shop-orderitemsreserver.azurewebsites.net/api/UploadOrderRequest", content);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task TransferBasketAsync(string anonymousId, string userName)
