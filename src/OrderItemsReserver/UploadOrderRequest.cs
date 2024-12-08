@@ -17,7 +17,7 @@ public static class UploadOrderRequest
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         dynamic orderDetails = JsonConvert.DeserializeObject(requestBody);
 
-        if (orderDetails == null || orderDetails.itemId == null || orderDetails.quantity == null)
+        if (orderDetails == null || orderDetails[0].ItemId == null || orderDetails[0].Quantity == null)
         {
             return new BadRequestObjectResult("Invalid order details.");
         }
