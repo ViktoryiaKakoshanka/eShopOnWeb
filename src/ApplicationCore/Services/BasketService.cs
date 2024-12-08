@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,7 +75,8 @@ public class BasketService : IBasketService
 
     private async Task UploadOrderDetailsToFunction(Dictionary<string, int> quantities)
     {
-        var jsonContent = JsonConvert.SerializeObject(quantities);
+        var orders = quantities.Select(x => new UploadOrder() { ItemId = x.Key, Quantity = x.Value.ToString() });
+        var jsonContent = JsonConvert.SerializeObject(orders);
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         var httpClient = new HttpClient();
@@ -101,5 +103,11 @@ public class BasketService : IBasketService
         }
         await _basketRepository.UpdateAsync(userBasket);
         await _basketRepository.DeleteAsync(anonymousBasket);
+    }
+
+    private class UploadOrder
+    {
+        public string ItemId { get; set; }
+        public string Quantity { get; set; }
     }
 }
