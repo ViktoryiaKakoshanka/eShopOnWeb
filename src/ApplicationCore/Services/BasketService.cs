@@ -58,7 +58,7 @@ public class BasketService : IBasketService
         var basket = await _basketRepository.FirstOrDefaultAsync(basketSpec);
         if (basket == null) return Result<Basket>.NotFound();
 
-        await UploadOrderDetailsToFunction(quantities);
+        //await UploadOrderDetailsToFunction(quantities);
 
         foreach (var item in basket.Items)
         {
@@ -73,16 +73,18 @@ public class BasketService : IBasketService
         return basket;
     }
 
+
+    //todo need active azure func - now it is dis-activated
     private async Task UploadOrderDetailsToFunction(Dictionary<string, int> quantities)
     {
-        var orders = quantities.Select(x => new UploadOrder() { ItemId = x.Key, Quantity = x.Value.ToString() });
-        var jsonContent = JsonConvert.SerializeObject(orders);
-        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //var orders = quantities.Select(x => new UploadOrder() { ItemId = x.Key, Quantity = x.Value.ToString() });
+        //var jsonContent = JsonConvert.SerializeObject(orders);
+        //var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var httpClient = new HttpClient();
+        //var httpClient = new HttpClient();
 
-        var response = await httpClient.PostAsync("https://e-shop-orderitemsreserver.azurewebsites.net/api/UploadOrderRequest", content);
-        response.EnsureSuccessStatusCode();
+        //var response = await httpClient.PostAsync("https://e-shop-orderitemsreserver.azurewebsites.net/api/UploadOrderRequest", content);
+        //response.EnsureSuccessStatusCode();
     }
 
     public async Task TransferBasketAsync(string anonymousId, string userName)
