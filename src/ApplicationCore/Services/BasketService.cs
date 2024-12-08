@@ -17,13 +17,10 @@ public class BasketService : IBasketService
     private readonly IRepository<Basket> _basketRepository;
     private readonly IAppLogger<BasketService> _logger;
 
-    private readonly HttpClient _httpClient;
-
-    public BasketService(IRepository<Basket> basketRepository, IAppLogger<BasketService> logger, HttpClient httpClient)
+    public BasketService(IRepository<Basket> basketRepository, IAppLogger<BasketService> logger)
     {
         _basketRepository = basketRepository;
         _logger = logger;
-        _httpClient = httpClient;
     }
 
     public async Task<Basket> AddItemToBasket(string username, int catalogItemId, decimal price, int quantity = 1)

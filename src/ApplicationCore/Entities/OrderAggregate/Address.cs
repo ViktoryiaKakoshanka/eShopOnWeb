@@ -23,4 +23,9 @@ public class Address // ValueObject
         Country = country;
         ZipCode = zipcode;
     }
+
+    public override string ToString()
+    {
+        return $"{Country} {City} st. {Street} {State}, {ZipCode}";
+    }
 }
